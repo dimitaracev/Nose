@@ -1,7 +1,7 @@
 module.exports = {
 	matchurl: (url, routes) => {
 		if (url[url.length - 1] == '/') url = url.substr(0, url.length - 1);
-		let router = undefined;
+		let router = [undefined, undefined];
 		let urlArray = url.split('/');
 		for (let route of routes) {
 			let routeUrlArray = route.route.split('/');
@@ -16,7 +16,7 @@ module.exports = {
 				else params[routeUrlArray[i].substr(1)] = urlArray[i];
 			}
 			if (length == count + paramLength) {
-				router = { router: route.router, params: params };
+				router = [route.router, params];
 				break;
 			}
 		}

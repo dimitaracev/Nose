@@ -1,6 +1,6 @@
 const http = require('http');
 
-module.exports = class {
+class Request {
 	constructor(request) {
 		if (request instanceof http.IncomingMessage) this.request = request;
 		else
@@ -8,4 +8,6 @@ module.exports = class {
 				'Request(request) - provided request not of type IncomingMessage'
 			);
 	}
-};
+}
+
+module.exports = Request;
