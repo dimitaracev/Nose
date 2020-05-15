@@ -17,7 +17,7 @@ module.exports = {
 						request.body = qs.parse(data);
 						break;
 					default:
-						throw Error('Content-type not supported');
+						throw Error('parseBody(request) - Content-type not supported');
 				}
 				resolve();
 			});
