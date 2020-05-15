@@ -1,23 +1,19 @@
 const Middleware = require('./middleware');
 class Route {
-
-	#subroutes;
+	#childroutes;
 	#middleware;
-	#GetCallback;
-	#DeleteCallback;
-	#PostCallback;
-	#PutCallback;
+	#Callbacks;
 	constructor() {
-		this.#subroutes = [];
+		this.#childroutes = [];
 		this.#middleware = new Middleware();
+		this.#Callbacks = {};
 	}
 
-	get Subroutes(){
-		return this.#subroutes;
+	get ChildRoutes() {
+		return this.#childroutes;
 	}
 
-	set Middleware(middleware)
-	{
+	set Middleware(middleware) {
 		this.#middleware = middleware;
 	}
 
@@ -25,88 +21,63 @@ class Route {
 		this.#middleware.Use(callback);
 	}
 
-	SubGet(route, callback) {
-		if (typeof route == 'string' && typeof callback == 'function') {
-			let subroute = new Route();
-			subroute.Get(callback);
-			subroute.Middleware = this.#middleware;
-			this.#subroutes.push({ subroute: route, router: subroute });
+	ChildGet(url, callback) {
+		if (typeof url == 'string' && typeof callback == 'function') {
+			let childrouter = new Route();
+			childrouter.Get(callback);
+			childrouter.Middleware = this.#middleware;
+			this.#childroutes.push({ url: url, route: childrouter });
 		}
 	}
 
-	SubPost(route, callback) {
-		if (typeof route == 'string' && typeof callback == 'function') {
-			let subroute = new Route();
-			subroute.Post(callback);
-			subroute.Middleware = this.#middleware;
-			this.#subroutes.push({ subroute: route, router: subroute });
+	ChildPost(url, callback) {
+		if (typeof url == 'string' && typeof callback == 'function') {
+			let childrouter = new Route();
+			childrouter.Post(callback);
+			childrouter.Middleware = this.#middleware;
+			this.#childroutes.push({ url: url, route: childrouter });
 		}
 	}
 
-	SubDelete(route, callback) {
-		if (typeof route == 'string' && typeof callback == 'function') {
-			let subroute = new Route();
-			subroute.Delete(callback);
-			subroute.Middleware = this.#middleware;
-			this.#subroutes.push({ subroute: route, router: subroute });
+	ChildDelete(url, callback) {
+		if (typeof url == 'string' && typeof callback == 'function') {
+			let childrouter = new Route();
+			childrouter.Delete(callback);
+			childrouter.Middleware = this.#middleware;
+			this.#childroutes.push({ url: url, route: childrouter });
 		}
 	}
 
-	SubPut(route, callback) {
-		if (typeof route == 'string' && typeof callback == 'function') {
-			let subroute = new Route();
-			subroute.Put(callback);
-			subroute.Middleware = this.#middleware;
-			this.#subroutes.push({ subroute: route, router: subroute });
+	ChildPut(url, callback) {
+		if (typeof url == 'string' && typeof callback == 'function') {
+			let childrouter = new Route();
+			childrouter.Put(callback);
+			childrouter.Middleware = this.#middleware;
+			this.#childroutes.push({ url: url, route: childrouter });
 		}
 	}
 
 	Get(callback) {
-		if (typeof callback == 'function') this.#GetCallback = callback;
+		if (typeof callback == 'function') this.#Callbacks['GET'] = callback;
 	}
 
 	Post(callback) {
-		if (typeof callback == 'function') this.#PostCallback = callback;
+		if (typeof callback == 'function') this.#Callbacks['POST'] = callback;
 	}
 
 	Delete(callback) {
-		if (typeof callback == 'function') this.#DeleteCallback = callback;
+		if (typeof callback == 'function') this.#Callbacks['DELETE'] = callback;
 	}
 
 	Put(callback) {
-		if (typeof callback == 'function') this.#PutCallback = callback;
+		if (typeof callback == 'function') this.#Callbacks['PUT'] = callback;
 	}
 
 	Handle(request, response) {
-		switch (request.method) {
-			case 'GET':
-				if (this.#GetCallback != undefined) {
-					this.#middleware.Run(request, response, () => {
-						this.#GetCallback(request, response);
-					});
-				}
-				break;
-			case 'POST':
-				if (this.#PostCallback != undefined) {
-					this.#middleware.Run(request, response, () => {
-						this.#PostCallback(request, response);
-					});
-				}
-				break;
-			case 'DELETE':
-				if (this.#DeleteCallback != undefined) {
-					this.#middleware.Run(request, response, () => {
-						this.#DeleteCallback(request, response);
-					});
-				}
-				break;
-			case 'PUT':
-				if (this.#PutCallback != undefined) {
-					this.#middleware.Run(request, response, () => {
-						this.#PutCallback(request, response);
-					});
-				}
-				break;
+		if (this.#Callbacks[request.method] != undefined) {
+			this.#middleware.Run(request, response, () => {
+				this.#Callbacks[request.method](request, response);
+			});
 		}
 	}
 }

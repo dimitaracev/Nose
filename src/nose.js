@@ -15,23 +15,20 @@ class Nose {
 		this.#middleware.Use(callback);
 	}
 
-	SetRoute(route, router) {
-		if (typeof route == 'string' && router instanceof Route) {
-			if (route[route.length - 1] == '/')
-				route = route.substr(0, route.length - 1);
-			this.#routes.push({ route: route, router: router });
-			for (let subroute of router.Subroutes) {
-				if (subroute.subroute[0] == '/')
-					subroute.subroute = subroute.subroute.substr(1);
-				if (route[route.length - 1] == '/')
-					route = route.substr(0, route.length - 1);
-
-				let subrouteUrl = route + '/' + subroute.subroute;
-				this.#routes.push({ route: subrouteUrl, router: subroute.router });
+	SetRoute(url, route) {
+		if (typeof url == 'string' && route instanceof Route) {
+			if (url[url.length - 1] == '/') url = url.substr(0, url.length - 1);
+			this.#routes.push({ url: url, route: route });
+			for (let childrouter of route.ChildRoutes) {
+				if (childrouter.url[0] == '/')
+					childrouter.url = childrouter.url.substr(1);
+				if (url[url.length - 1] == '/') url = url.substr(0, route.length - 1);
+				let childrouterUrl = url + '/' + childrouter.url;
+				this.#routes.push({ url: childrouterUrl, route: childrouter.route });
 			}
 		} else
 			throw TypeError(
-				'AddRoute(route, router) - provided route/router not of type string/Route'
+				'SetRoute(url, route) - provided route/router not of type string/Route'
 			);
 	}
 

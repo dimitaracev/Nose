@@ -1,5 +1,4 @@
 class Middleware {
-	
 	#middlewares;
 	constructor() {
 		this.#middlewares = [];
@@ -11,13 +10,12 @@ class Middleware {
 	}
 
 	Run(request, response, finish) {
-		let execute = (request, response, done) => {
+		((request, response, done) => {
 			this.#middlewares.reduceRight(
 				(done, next) => () => next(request, response, done),
 				done
 			)(request, response);
-		};
-		execute(request, response, () => finish());
+		})(request, response, () => finish());
 	}
 }
 

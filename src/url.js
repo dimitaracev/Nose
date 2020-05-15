@@ -4,7 +4,7 @@ module.exports = {
 		let router = [undefined, undefined];
 		let urlArray = url.split('/');
 		for (let route of routes) {
-			let routeUrlArray = route.route.split('/');
+			let routeUrlArray = route.url.split('/');
 			if (urlArray.length != routeUrlArray.length) continue;
 			let length = urlArray.length || routeUrlArray.length;
 			let paramLength = routeUrlArray.filter((item) => item.includes(':'))
@@ -16,7 +16,7 @@ module.exports = {
 				else params[routeUrlArray[i].substr(1)] = urlArray[i];
 			}
 			if (length == count + paramLength) {
-				router = [route.router, params];
+				router = [route.route, params];
 				break;
 			}
 		}
