@@ -2,6 +2,7 @@ const http = require('http');
 const Route = require('./route');
 const Url = require('./url');
 const Middleware = require('./middleware');
+const bodyparser = require('./bodyparser');
 class Nose {
 	#routes;
 	#middleware;
@@ -41,10 +42,11 @@ class Nose {
 			.createServer((request, response) => {
 				let [route, params] = Url.matchurl(request.url, this.#routes);
 				if (params != undefined) request.params = params;
-
 				if (route != undefined) {
-					this.#middleware.Run(request, response, () => {
-						route.Handle(request, response);
+					bodyparser.parseBody(request).then(() => {
+						this.#middleware.Run(request, response, () => {
+							route.Handle(request, response);
+						});
 					});
 				} else {
 					PageNotFound(response);
