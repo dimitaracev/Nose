@@ -59,18 +59,34 @@ class Route {
 
 	Get(callback) {
 		if (typeof callback == 'function') this.#Callbacks['GET'] = callback;
+		else
+			throw TypeError(
+				'Get(callback) - provided callback not of type function.'
+			);
 	}
 
 	Post(callback) {
 		if (typeof callback == 'function') this.#Callbacks['POST'] = callback;
+		else
+			throw TypeError(
+				'Post(callback) - provided callback not of type function.'
+			);
 	}
 
 	Delete(callback) {
 		if (typeof callback == 'function') this.#Callbacks['DELETE'] = callback;
+		else
+			throw TypeError(
+				'Delete(callback) - provided callback not of type function.'
+			);
 	}
 
 	Put(callback) {
 		if (typeof callback == 'function') this.#Callbacks['PUT'] = callback;
+		else
+			throw TypeError(
+				'Put(callback) - provided callback not of type function.'
+			);
 	}
 
 	Handle(request, response) {
@@ -78,6 +94,8 @@ class Route {
 			this.#middleware.Run(request, response, () => {
 				this.#Callbacks[request.method](request, response);
 			});
+		} else {
+			throw Error('Handle(request, response) - Requested route not found.');
 		}
 	}
 }

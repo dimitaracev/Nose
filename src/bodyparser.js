@@ -4,12 +4,12 @@ module.exports = {
 		let content = request.headers['content-type'];
 		let bodyData = [];
 		return new Promise((resolve, reject) => {
-			if (request.method != 'GET') {
-				request.on('data', (chunk) => {
-					bodyData.push(chunk);
-				});
-				request.on('end', () => {
-					let data = Buffer.concat(bodyData).toString();
+			request.on('data', (chunk) => {
+				bodyData.push(chunk);
+			});
+			request.on('end', () => {
+				let data = Buffer.concat(bodyData).toString();
+				if (data.length != 0) {
 					switch (content) {
 						case 'application/json':
 							request.body = JSON.parse(data);
@@ -21,11 +21,9 @@ module.exports = {
 							reject();
 							throw Error('parseBody(request) - Content-type not supported');
 					}
-					resolve();
-				});
-			} else {
+				}
 				resolve();
-			}
+			});
 		});
 	},
 };
