@@ -19,7 +19,7 @@ module.exports = {
 							break;
 						default:
 							reject();
-							throw Error('parseBody(request) - Content-type not supported');
+							throw Error('parseBody(request) - Content-type not supported.');
 					}
 				}
 				resolve();

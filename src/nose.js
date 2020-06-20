@@ -8,7 +8,7 @@ class Nose {
 	#middleware;
 	constructor() {
 		this.#middleware = new Middleware();
-		this.#routes = new Array();
+		this.#routes = [];
 	}
 
 	Use(callback) {
@@ -28,13 +28,13 @@ class Nose {
 			}
 		} else
 			throw TypeError(
-				'SetRoute(url, route) - provided route/router not of type string/Route'
+				'SetRoute(url, route) - provided route/router not of type string/Route.'
 			);
 	}
 
 	Listen(PORT) {
 		if (typeof PORT != 'number')
-			throw TypeError('Listen(port) - provided port not of type number');
+			throw TypeError('Listen(port) - provided port not of type number.');
 		http
 			.createServer((request, response) => {
 				let [route, params] = Url.matchurl(request.url, this.#routes);

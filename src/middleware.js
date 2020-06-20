@@ -6,7 +6,7 @@ class Middleware {
 	Use(callback) {
 		if (typeof callback == 'function') this.#middlewares.push(callback);
 		else
-			throw TypeError('Use(callback) - provided callback not of type function');
+			throw TypeError('Use(callback) - provided callback not of type function.');
 	}
 
 	Run(request, response, finish) {
