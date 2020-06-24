@@ -21,12 +21,12 @@ class Route {
 		this.#middleware.Use(callback);
 	}
 
-	ChildAlL(url, callback) {
+	ChildAll(url, callback) {
 		if (typeof url == 'string' && typeof callback == 'function') {
 			this.ChildGet(url, callback);
 			this.ChildPost(url, callback);
 			this.ChildDelete(url, callback);
-			this.ChildDelete(url, callback);
+			this.ChildPut(url, callback);
 		} else {
 			throw new TypeError(
 				'ChildAll(url, callback) - provided url/callback not of type string/function.'
@@ -36,8 +36,10 @@ class Route {
 
 	ChildGet(url, callback) {
 		if (typeof url == 'string' && typeof callback == 'function') {
-			let childrouter = this.#childroutes.get(url);
-			if (childrouter == undefined) childrouter = new Route();
+			let childrouter;
+			if (this.#childroutes.has(url))
+				childrouter = this.#childroutes.get(url)['route'];
+			else childrouter = new Route();
 
 			childrouter.Get(callback);
 			childrouter.Middleware = this.#middleware;
@@ -51,8 +53,10 @@ class Route {
 
 	ChildPost(url, callback) {
 		if (typeof url == 'string' && typeof callback == 'function') {
-			let childrouter = this.#childroutes.get(url);
-			if (childrouter == undefined) childrouter = new Route();
+			let childrouter;
+			if (this.#childroutes.has(url))
+				childrouter = this.#childroutes.get(url)['route'];
+			else childrouter = new Route();
 
 			childrouter.Post(callback);
 			childrouter.Middleware = this.#middleware;
@@ -66,8 +70,10 @@ class Route {
 
 	ChildDelete(url, callback) {
 		if (typeof url == 'string' && typeof callback == 'function') {
-			let childrouter = this.#childroutes.get(url);
-			if (childrouter == undefined) childrouter = new Route();
+			let childrouter;
+			if (this.#childroutes.has(url))
+				childrouter = this.#childroutes.get(url)['route'];
+			else childrouter = new Route();
 
 			childrouter.Delete(callback);
 			childrouter.Middleware = this.#middleware;
@@ -81,8 +87,10 @@ class Route {
 
 	ChildPut(url, callback) {
 		if (typeof url == 'string' && typeof callback == 'function') {
-			let childrouter = this.#childroutes.get(url);
-			if (childrouter == undefined) childrouter = new Route();
+			let childrouter;
+			if (this.#childroutes.has(url))
+				childrouter = this.#childroutes.get(url)['route'];
+			else childrouter = new Route();
 
 			childrouter.Put(callback);
 			childrouter.Middleware = this.#middleware;

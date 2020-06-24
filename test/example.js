@@ -1,13 +1,14 @@
 const Nose = require('../src/nose');
 const Route = require('../src/route');
-
+const path = require('path');
 const app = new Nose();
 
 const home = new Route();
 
+app.Static(path.join(__dirname, 'static'));
 
 home.ChildGet('/hello', (req, res) => {
-    res.end('Child World!');
+    res.render('index.html');
 })
 
 home.ChildGet('/user/:id', (req, res) => {

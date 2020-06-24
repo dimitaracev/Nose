@@ -3,12 +3,17 @@ const Route = require('./route');
 const Url = require('./url');
 const Middleware = require('./middleware');
 const bodyparser = require('./bodyparser');
+const staticf = require('./staticf');
+const fs = require('fs');
+const path = require('path');
 class Nose {
 	#routes;
 	#middleware;
+	#static_dir;
 	constructor() {
 		this.#middleware = new Middleware();
 		this.#routes = [];
+		this.#static_dir = '';
 	}
 
 	Use(callback) {
@@ -32,9 +37,18 @@ class Nose {
 			);
 	}
 
+	Static(path)
+	{
+		this.#static_dir = path;
+	}
+
 	Listen(PORT) {
 		if (typeof PORT != 'number')
 			throw TypeError('Listen(port) - provided port not of type number.');
+
+		let static_files = staticf.serve(this.#static_dir);
+		this.SetRoute('/static', static_files);
+
 		http
 			.createServer((request, response) => {
 				let [route, params] = Url.matchurl(request.url, this.#routes);
@@ -42,6 +56,12 @@ class Nose {
 				if (route != undefined) {
 					bodyparser.parseBody(request).then(() => {
 						this.#middleware.Run(request, response, () => {
+							response.render = (filename) => {
+								let fpath = path.join(this.#static_dir, filename);
+								let data = fs.readFileSync(fpath);
+								response.setHeader('Content-type', 'text/html;');
+								response.end(data);
+							};
 							route.Handle(request, response);
 						});
 					});
