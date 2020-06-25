@@ -5,7 +5,7 @@ const app = new Nose();
 
 const home = new Route();
 
-app.Static(path.join(__dirname, 'static'));
+app.Static(path.join(__dirname, '..', 'static'));
 
 home.ChildGet('/hello', (req, res) => {
     res.render('index.html');

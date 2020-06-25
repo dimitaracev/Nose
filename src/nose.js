@@ -37,8 +37,7 @@ class Nose {
 			);
 	}
 
-	Static(path)
-	{
+	Static(path) {
 		this.#static_dir = path;
 	}
 
@@ -59,7 +58,7 @@ class Nose {
 							response.render = (filename) => {
 								let fpath = path.join(this.#static_dir, filename);
 								let data = fs.readFileSync(fpath);
-								response.setHeader('Content-type', 'text/html;');
+								response.setHeader('Content-type', 'text/html;charset=utf8;');
 								response.end(data);
 							};
 							route.Handle(request, response);
