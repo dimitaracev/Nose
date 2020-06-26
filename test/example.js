@@ -1,5 +1,5 @@
-const Nose = require('../src/nose');
-const Route = require('../src/route');
+const Nose = require('nosejs');
+const Route = require('nosejs').Route;
 const path = require('path');
 const app = new Nose();
 

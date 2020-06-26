@@ -12,7 +12,7 @@ Rendering static files require setting the static folder first, that can be done
 <br>
 
 ```js
-const Nose = require('../src/nose');
+const Nose = require('nosejs');
 const path = require('path');
 
 const app = new Nose();
@@ -23,8 +23,8 @@ app.Static(path.join(__dirname, 'static'));
 
 A simple http server would look like this:
 ```js
-const Nose = require('../src/nose');
-const Route = require('../src/route');
+const Nose = require('nosejs');
+const Route = require('nosejs').Route;
 const path = require('path');
 const app = new Nose();
 

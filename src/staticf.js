@@ -26,37 +26,31 @@ module.exports = {
 				});
 				return ret_files;
 			};
-			let files = recursive_search(static_path);
-			files.forEach((file) => {
+
+			recursive_search(static_path).forEach((file) => {
 				let extension = path.extname(file);
 				const fpath = path.join(static_path, file);
 				const data = fs.readFileSync(fpath);
-				switch (extension) {
-					case '.css':
-						staticf.ChildAll(file, (req, res) => {
+				staticf.ChildAll(file, (req, res) => {
+					switch (extension) {
+						case '.css':
 							res.setHeader('Content-Type', 'text/css;charset=utf8;');
-							res.end(data);
-						});
-						break;
-					case '.js':
-						staticf.ChildAll(file, (req, res) => {
-							res.setHeader('Content-Type', 'application/javascript;charset=utf8;');
-							res.end(data);
-						});
-					case '.png':
-						staticf.ChildAll(file, (req, res) => {
+							break;
+						case '.js':
+							res.setHeader(
+								'Content-Type',
+								'application/javascript;charset=utf8;'
+							);
+						case '.png':
 							res.setHeader('Content-Type', 'image/png;');
-							res.end(data);
-						});
-						break;
-					case '.jpg':
-					case '.jpeg':
-						staticf.ChildAll(file, (req, res) => {
+							break;
+						case '.jpg':
+						case '.jpeg':
 							res.setHeader('Content-Type', 'image/jpeg;');
-							res.end(data);
-						});
-						break;
-				}
+							break;
+					}
+					res.end(data);
+				});
 			});
 		} catch (Exception) {
 			console.log(Exception);
