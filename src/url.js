@@ -1,6 +1,7 @@
+const trim = require('./trim');
+
 module.exports = {
 	matchurl: (url, routes) => {
-		if (url[url.length - 1] == '/') url = url.substr(0, url.length - 1);
 		let router = [undefined, undefined];
 		let urlArray = url.split('/');
 		for (let route of routes) {

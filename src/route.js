@@ -28,7 +28,7 @@ class Route {
 			this.ChildDelete(url, callback);
 			this.ChildPut(url, callback);
 		} else {
-			throw new TypeError(
+			throw TypeError(
 				'ChildAll(url, callback) - provided url/callback not of type string/function.'
 			);
 		}
@@ -36,7 +36,7 @@ class Route {
 
 	ChildGet(url, callback) {
 		if (typeof url == 'string' && typeof callback == 'function') {
-			let childrouter;
+			let childrouter = undefined;
 			if (this.#childroutes.has(url))
 				childrouter = this.#childroutes.get(url)['route'];
 			else childrouter = new Route();
@@ -45,7 +45,7 @@ class Route {
 			childrouter.Middleware = this.#middleware;
 			this.#childroutes.set(url, { url: url, route: childrouter });
 		} else {
-			throw new TypeError(
+			throw TypeError(
 				'ChildGet(url, callback) - provided url/callback not of type string/function.'
 			);
 		}
@@ -53,7 +53,7 @@ class Route {
 
 	ChildPost(url, callback) {
 		if (typeof url == 'string' && typeof callback == 'function') {
-			let childrouter;
+			let childrouter = undefined;
 			if (this.#childroutes.has(url))
 				childrouter = this.#childroutes.get(url)['route'];
 			else childrouter = new Route();
@@ -62,7 +62,7 @@ class Route {
 			childrouter.Middleware = this.#middleware;
 			this.#childroutes.set(url, { url: url, route: childrouter });
 		} else {
-			throw new TypeError(
+			throw TypeError(
 				'ChildPost(url, callback) - provided url/callback not of type string/function.'
 			);
 		}
@@ -70,7 +70,7 @@ class Route {
 
 	ChildDelete(url, callback) {
 		if (typeof url == 'string' && typeof callback == 'function') {
-			let childrouter;
+			let childrouter = undefined;
 			if (this.#childroutes.has(url))
 				childrouter = this.#childroutes.get(url)['route'];
 			else childrouter = new Route();
@@ -79,7 +79,7 @@ class Route {
 			childrouter.Middleware = this.#middleware;
 			this.#childroutes.set(url, { url: url, route: childrouter });
 		} else {
-			throw new TypeError(
+			throw TypeError(
 				'ChildDelete(url, callback) - provided url/callback not of type string/function.'
 			);
 		}
@@ -87,7 +87,7 @@ class Route {
 
 	ChildPut(url, callback) {
 		if (typeof url == 'string' && typeof callback == 'function') {
-			let childrouter;
+			let childrouter = undefined;
 			if (this.#childroutes.has(url))
 				childrouter = this.#childroutes.get(url)['route'];
 			else childrouter = new Route();
@@ -96,7 +96,7 @@ class Route {
 			childrouter.Middleware = this.#middleware;
 			this.#childroutes.set(url, { url: url, route: childrouter });
 		} else {
-			throw new TypeError(
+			throw TypeError(
 				'ChildPut(url, callback) - provided url/callback not of type string/function.'
 			);
 		}
@@ -109,7 +109,7 @@ class Route {
 			this.Delete(callback);
 			this.Put(callback);
 		} else {
-			throw new TypeError(
+			throw TypeError(
 				'All(callback) - provided callback not of type function.'
 			);
 		}
@@ -126,7 +126,7 @@ class Route {
 	Post(callback) {
 		if (typeof callback == 'function') this.#Callbacks['POST'] = callback;
 		else
-			throw new TypeError(
+			throw TypeError(
 				'Post(callback) - provided callback not of type function.'
 			);
 	}
@@ -134,7 +134,7 @@ class Route {
 	Delete(callback) {
 		if (typeof callback == 'function') this.#Callbacks['DELETE'] = callback;
 		else
-			throw new TypeError(
+			throw TypeError(
 				'Delete(callback) - provided callback not of type function.'
 			);
 	}
@@ -142,7 +142,7 @@ class Route {
 	Put(callback) {
 		if (typeof callback == 'function') this.#Callbacks['PUT'] = callback;
 		else
-			throw new TypeError(
+			throw TypeError(
 				'Put(callback) - provided callback not of type function.'
 			);
 	}
@@ -153,7 +153,7 @@ class Route {
 				this.#Callbacks[request.method](request, response);
 			});
 		} else {
-			throw new Error('Handle(request, response) - Requested route not found.');
+			throw Error('Handle(request, response) - Requested route not found.');
 		}
 	}
 }

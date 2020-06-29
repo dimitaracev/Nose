@@ -1,14 +1,16 @@
 const Nose = require('nosejs');
 const Route = require('nosejs').Route;
 const path = require('path');
-const app = new Nose();
+
+const app = new Nose({
+    port: 8079,
+    static: path.join(__dirname, 'static')
+});
 
 const home = new Route();
 
-app.Static(path.join(__dirname, '..', 'static'));
-
 home.ChildGet('/hello', (req, res) => {
-    res.render('index.html');
+    res.render('hello.html');
 })
 
 home.ChildGet('/user/:id', (req, res) => {
@@ -25,5 +27,10 @@ app.Use((req, res, next) => {
     next();
 })
 
+app.SetNotFound((req, res) => {
+    res.end('404 - Not Found');
+})
+
+
 app.SetRoute('/home', home);
-app.Listen(8080);
+app.Listen();

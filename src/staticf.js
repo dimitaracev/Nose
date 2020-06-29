@@ -2,6 +2,26 @@ const fs = require('fs');
 const path = require('path');
 const Route = require('./route');
 
+function recursive_search(curpath, static_path) {
+	try {
+		let files = fs.readdirSync(curpath, { withFileTypes: true });
+		let ret_files = [];
+		files.forEach((file) => {
+			if (file.isDirectory()) {
+				let dpath = path.join(curpath, file.name);
+				ret_files = ret_files.concat(recursive_search(dpath, static_path));
+			} else if (file.isFile()) {
+				let fpath = path.join(curpath, file.name);
+				fpath = fpath.slice(static_path.length, fpath.length);
+				ret_files.push(fpath);
+			}
+		});
+		return ret_files;
+	} catch (Exception) {
+		console.log(Exception);
+	}
+}
+
 module.exports = {
 	serve: (static_path) => {
 		let staticf = new Route();
@@ -11,23 +31,7 @@ module.exports = {
 		});
 
 		try {
-			let recursive_search = (spath) => {
-				let files = fs.readdirSync(spath, { withFileTypes: true });
-				let ret_files = [];
-				files.forEach((file) => {
-					if (file.isDirectory()) {
-						let dpath = path.join(spath, file.name);
-						ret_files = ret_files.concat(recursive_search(dpath));
-					} else if (file.isFile()) {
-						let fpath = path.join(spath, file.name);
-						fpath = fpath.slice(static_path.length, fpath.length);
-						ret_files.push(fpath);
-					}
-				});
-				return ret_files;
-			};
-
-			recursive_search(static_path).forEach((file) => {
+			recursive_search(static_path, static_path).forEach((file) => {
 				let extension = path.extname(file);
 				const fpath = path.join(static_path, file);
 				const data = fs.readFileSync(fpath);

@@ -4,16 +4,35 @@ const Url = require('./url');
 const Middleware = require('./middleware');
 const bodyparser = require('./bodyparser');
 const staticf = require('./staticf');
+const trim = require('./trim');
 const fs = require('fs');
 const path = require('path');
+const { type } = require('os');
 class Nose {
+	#notfound;
 	#routes;
 	#middleware;
-	#static_dir;
-	constructor() {
+	#options;
+	constructor(options) {
+		this.#options = Object.assign(this.DefaultOptions(), options);
 		this.#middleware = new Middleware();
-		this.#routes = [];
-		this.#static_dir = '';
+		this.#routes = new Map();
+		this.#notfound = this.DefaultNotFound();
+	}
+
+	DefaultOptions() {
+		return {
+			static: undefined,
+			port: process.env.PORT || 8080,
+		};
+	}
+
+	DefaultNotFound() {
+		return (req, res) => {
+			res.setHeader('Content-type', 'text/plain;charset=utf-8');
+			res.writeHead(404, 'Page not found');
+			res.end('404 - Page not found');
+		};
 	}
 
 	Use(callback) {
@@ -22,14 +41,15 @@ class Nose {
 
 	SetRoute(url, route) {
 		if (typeof url == 'string' && route instanceof Route) {
-			if (url[url.length - 1] == '/') url = url.substr(0, url.length - 1);
-			this.#routes.push({ url: url, route: route });
+			url = trim.slash(url);
+			this.#routes.set(url, { url: url, route: route });
 			for (let childrouter of route.ChildRoutes) {
-				if (childrouter.url[0] == '/')
-					childrouter.url = childrouter.url.substr(1);
-				if (url[url.length - 1] == '/') url = url.substr(0, route.length - 1);
+				childrouter.url = trim.slash(childrouter.url);
 				let childrouterUrl = url + '/' + childrouter.url;
-				this.#routes.push({ url: childrouterUrl, route: childrouter.route });
+				this.#routes.set(childrouterUrl, {
+					url: childrouterUrl,
+					route: childrouter.route,
+				});
 			}
 		} else
 			throw TypeError(
@@ -37,44 +57,55 @@ class Nose {
 			);
 	}
 
-	Static(path) {
-		this.#static_dir = path;
+	SetNotFound(callback) {
+		if (typeof callback == 'function') {
+			this.#notfound = callback;
+		} else {
+			throw TypeError(
+				'SetNotFoundPage(callback) - provided callback not of type function.'
+			);
+		}
 	}
 
-	Listen(PORT) {
-		if (typeof PORT != 'number')
-			throw TypeError('Listen(port) - provided port not of type number.');
-
-		let static_files = staticf.serve(this.#static_dir);
-		this.SetRoute('/static', static_files);
+	Listen() {
+		if (this.#options['static'] != undefined) {
+			this.SetRoute('/static', staticf.serve(this.#options['static']));
+			http.ServerResponse.prototype.render = (filename) => {
+				if (this.#options['static'] == undefined) {
+					throw Error('Static Folder not defined.');
+				} else {
+					let fpath = path.join(this.options['static'], filename);
+					let data = fs.readFileSync(fpath);
+					response.setHeader('Content-type', 'text/html;charset=utf8;');
+					response.end(data);
+				}
+			};
+		}
 
 		http
-			.createServer((request, response) => {
-				let [route, params] = Url.matchurl(request.url, this.#routes);
-				if (params != undefined) request.params = params;
+			.createServer((req, res) => {
+				let route = undefined,
+					params = undefined;
+				req.url = trim.slash(req.url);
+				if (this.#routes.has(req.url)) {
+					route = this.#routes.get(req.url)['route'];
+				} else {
+					[route, params] = Url.matchurl(req.url, this.#routes.values());
+					if (params != undefined) req.params = params;
+				}
 				if (route != undefined) {
-					bodyparser.parseBody(request).then(() => {
-						this.#middleware.Run(request, response, () => {
-							response.render = (filename) => {
-								let fpath = path.join(this.#static_dir, filename);
-								let data = fs.readFileSync(fpath);
-								response.setHeader('Content-type', 'text/html;charset=utf8;');
-								response.end(data);
-							};
-							route.Handle(request, response);
+					bodyparser.parseBody(req).then(() => {
+						this.#middleware.Run(req, res, () => {
+							route.Handle(req, res);
 						});
 					});
 				} else {
-					PageNotFound(response);
+					this.#middleware.Run(req, res, () => {
+						this.#notfound(req, res);
+					});
 				}
 			})
-			.listen(PORT);
-
-		let PageNotFound = (response) => {
-			response.setHeader('Content-type', 'text/plain;charset=utf-8');
-			response.writeHead(404, 'Page not found');
-			response.end('404 - Page not found');
-		};
+			.listen(this.#options['port']);
 	}
 }
 
