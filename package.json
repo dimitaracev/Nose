@@ -1,6 +1,6 @@
 {
 	"name": "nosejs",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "Simple NodeJs router",
 	"main": "main.js",
 	"scripts": {},
@@ -9,13 +9,9 @@
 		"url": "git+https://github.com/dimitaracev/Nose.git"
 	},
 	"author": "Dimitar Acev",
-	"license": "ISC",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/dimitaracev/Nose/issues"
 	},
-	"homepage": "https://github.com/dimitaracev/Nose#readme",
-	"prettier": {
-		"singleQuote": true,
-		"useTabs": true
-	}
+	"homepage": "https://github.com/dimitaracev/Nose#readme"
 }
