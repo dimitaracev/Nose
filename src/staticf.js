@@ -2,6 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const Route = require("./route");
 
+const Exclusions = [".html", ".ejs", ".mustache", ".handlebars"];
+
 function recursive_search(curpath, static_path) {
   try {
     let files = fs.readdirSync(curpath, { withFileTypes: true });
@@ -11,9 +13,12 @@ function recursive_search(curpath, static_path) {
         let dpath = path.join(curpath, file.name);
         ret_files = ret_files.concat(recursive_search(dpath, static_path));
       } else if (file.isFile()) {
-        let fpath = path.join(curpath, file.name);
-        fpath = fpath.slice(static_path.length, fpath.length);
-        ret_files.push(fpath);
+        let extension = path.extname(file);
+        if (!Exclusions.includes(extension)) {
+          let fpath = path.join(curpath, file.name);
+          fpath = fpath.slice(static_path.length, fpath.length);
+          ret_files.push(fpath);
+        }
       }
     });
     return ret_files;

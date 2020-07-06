@@ -8,6 +8,9 @@ npm
 npm install nosejs
 ```
 
+## Engines
+* Currently supported engines: ejs, mustache, handlebars.
+
 ## Usage
 A simple http server would look like this:
 ```js

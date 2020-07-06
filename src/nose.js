@@ -47,7 +47,12 @@ class Nose {
       this.#routes.set(url, { url: url, route: route });
       for (let childrouter of route.ChildRoutes) {
         childrouter.url = trim.slash(childrouter.url);
-        let childrouterUrl = url + "/" + childrouter.url;
+        
+        let childrouterUrl;
+        
+        if(url != "") childrouterUrl = url + "/" + childrouter.url;
+        else childrouterUrl = childrouter.url;
+
         this.#routes.set(childrouterUrl, {
           url: childrouterUrl,
           route: childrouter.route,
